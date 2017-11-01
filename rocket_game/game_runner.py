@@ -1,5 +1,4 @@
 import pyglet
-
 import settings
 from rocket_game import checker
 from rocket_game import renderer
@@ -23,29 +22,30 @@ class GameRunner:
 
         self.render = renderer.Renderer(self.gs)
 
-        tickrate = 1 / self.gs.fps
-
         print("running game.")
 
-        pyglet.clock.schedule_interval(self.render.draw_all,tickrate)
-
-        pyglet.clock.schedule_interval(self.update.update_all,tickrate)
-
-        pyglet.clock.schedule_interval(self.check.check_all,tickrate)
-
-        pyglet.clock.schedule_interval(self.exit_action,tickrate)
+        self.set_up_clock_events()
 
         pyglet.app.run()
 
         print("game has ended")
 
+        # window.has_exit becomes true when the pyglet window is forced to close
         if self.render.game_window.has_exit:
             GameRunner.forceQuit = True
 
         return self.gs
 
 
+    # This function schedules necessary events for game running with gui
+    def set_up_clock_events(self):
 
+        tickrate = 1 / self.gs.fps
+
+        pyglet.clock.schedule_interval(self.render.draw_all, tickrate)
+        pyglet.clock.schedule_interval(self.update.update_all, tickrate)
+        pyglet.clock.schedule_interval(self.check.check_all, tickrate)
+        pyglet.clock.schedule_interval(self.exit_action, tickrate)
 
     # This Defines what happens when game is over
     # Could be modified conveniently to restart a simulation in simulator Class
@@ -61,6 +61,9 @@ class GameRunner:
             pyglet.app.exit()
         else:
             pass
+
+
+
 
     # This runs the game without graphic rendering.
     # It speeds up the simulation/evolution significantly

@@ -26,12 +26,10 @@ class Simulator():
             print(count)
 
             self.initiate()
-
-            #self.lor = self.runner.run_without_render(0.00001)
             self.gs = self.runner.run()
 
-            tuple_of_gene_and_fitness = evaluator.evaluate_fitness_lor(self.gs.lor,self.gs.lob)
-            print(tuple_of_gene_and_fitness[1])
+            tuple_of_gene_and_fitness = evaluator.evaluate_fitness_lor(self.gs.lor,self.gs.lobs)
+
             self.log = evolution.evolve_all(tuple_of_gene_and_fitness)
 
             count -= 1
@@ -53,10 +51,9 @@ class Simulator():
             print(count)
 
             self.initiate()
-
             self.gs = self.runner.run_without_render()
 
-            tuple_of_gene_and_fitness = evaluator.evaluate_fitness_lor(self.gs.lor, self.gs.lob)
+            tuple_of_gene_and_fitness = evaluator.evaluate_fitness_lor(self.gs.lor, self.gs.lobs)
 
             self.log = evolution.evolve_all(tuple_of_gene_and_fitness)
 

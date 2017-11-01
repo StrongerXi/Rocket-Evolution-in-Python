@@ -2,6 +2,8 @@
 import settings
 from basics import rocket
 from basics.vector import Vector
+from rocket_game import checker
+from rocket_game import game_state
 
 
 # list_of_rockets List of Obstacles-> Tuple_of_gene_and_fitness
@@ -38,7 +40,16 @@ def evaluate_fitness_rocket(rocket):
 
     # A rocket's fitness is default at 1, then it might becomes a bonus or penalty factor
     # depending on whether it has hit a target or boundary
-    fitness = rocket.fitness * raw_fitness
+    if rocket.hit_boundary():
+        fitness = raw_fitness * settings.HIT_BOUNDARY_PENALTY
+    elif rocket.hit_obstacle():
+        fitness = raw_fitness * settings.HIT_OBSTALCE_PENALTY
+    elif rocket.hit_target():
+        fitness = raw_fitness * settings.HIT_TARGET_BONUS
+    elif rocket.used_up_gene():
+        fitness = raw_fitness
+    else:
+        raise Exception("Abnormal rocket state: ", rocket.get_state())
 
     return fitness
 
@@ -53,7 +64,6 @@ def passed_all_obstacles(roc,lob):
 # Rocket Obstacle -> Boolean
 # returns true if the rocket has passed obstacle towards target
 def passed_obstacle(roc, obs):
-
 
     rocket_pos = obs.rocket_relative_location(roc)
 
@@ -96,19 +106,36 @@ def fitness_function(r):
     return fitness
 
 
-r1 = rocket.Rocket(Vector(800, 0), Vector(0, 0), [Vector(1, 1)])
-r2 = rocket.Rocket(Vector(800, 300), Vector(0, 0), [Vector(2, 2)])
-r3 = rocket.Rocket(Vector(600, 790), Vector(0, 0), [Vector(3, 3)])
-r4 = rocket.Rocket(Vector(0, 600), Vector(0, 0), [Vector(4, 4)])
-r5 = rocket.Rocket(Vector(600, 347), Vector(0, 0), [Vector(5, 5)])
-
-lor = [r1,r2,r3,r4,r5]
-lob = [settings.OBSTACLE_1, settings.OBSTACLE_2, settings.OBSTACLE_3]
-
-togaf = evaluate_fitness_lor(lor, lob)
+if __name__ == "__main__":
+    r1 = rocket.Rocket(Vector(800, 0), Vector(0, 0), [Vector(1, 1)])
+    r2 = rocket.Rocket(Vector(800, 200), Vector(0, 0), [Vector(2, 2)])
+    r3 = rocket.Rocket(Vector(600, 690), Vector(0, 0), [Vector(3, 3)])
+    r4 = rocket.Rocket(Vector(0, 600), Vector(0, 0), [Vector(4, 4)])
+    r5 = rocket.Rocket(Vector(600, 347), Vector(0, 0), [Vector(5, 5)])
 
 
-print(settings.OBSTACLE_2.rocket_relative_location(r1))
-print(obstacle_favored_region(settings.OBSTACLE_2))
-print(passed_obstacle(r1,settings.OBSTACLE_2))
-print(togaf[1])
+    lor = [r1,r2,r3,r4,r5]
+    lob = [settings.OBSTACLE_1, settings.OBSTACLE_2, settings.OBSTACLE_3]
+
+    gs = game_state.GameState(lor= lor)
+
+    ck = checker.Checker(gs)
+
+    #ck.check_all()
+
+    checker.check_boundary_lor(lor)
+
+    print(r1.get_state())
+    print(r2.get_state())
+    print(r3.get_state())
+    print(r4.get_state())
+    print(r5.get_state())
+
+
+    #togaf = evaluate_fitness_lor(lor, lob)
+
+
+    print(settings.OBSTACLE_2.rocket_relative_location(r1))
+    print(obstacle_favored_region(settings.OBSTACLE_2))
+    print(passed_obstacle(r1,settings.OBSTACLE_2))
+    #print(togaf[1])

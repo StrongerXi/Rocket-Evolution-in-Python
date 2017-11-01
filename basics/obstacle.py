@@ -4,7 +4,9 @@ class Obstacle:
 
     # Constructor requires at least the width and height of obstacle
     # default location of obstacle is the center of Game Background
-    def __init__(self, width, height, x ,y):
+    def __init__(self, width, height, x, y, image,):
+
+        self.image = image
 
         self.width = width
         self.height = height

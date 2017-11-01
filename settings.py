@@ -1,6 +1,7 @@
 from pyglet import image
 from basics.obstacle import Obstacle
 from basics.vector import Vector
+from enum import Enum, auto
 
 # Background Constants
 BACKG_WIDTH = 1000
@@ -40,9 +41,9 @@ OBSTACLE_1_WIDTH = 30
 OBSTACLE_1_HEIGHT = 200
 OBSTACLE_1_POSX = 500
 OBSTACLE_1_POSY = 350
-OBSTACLE_1 = Obstacle(OBSTACLE_1_WIDTH, OBSTACLE_1_HEIGHT, OBSTACLE_1_POSX, OBSTACLE_1_POSY)
 OBSTACLE_1_COLOR = (200,0,0,255)
 OBSTACLE_1_IMAGE = image.SolidColorImagePattern(OBSTACLE_1_COLOR).create_image(OBSTACLE_1_WIDTH, OBSTACLE_1_HEIGHT)
+OBSTACLE_1 = Obstacle(OBSTACLE_1_WIDTH, OBSTACLE_1_HEIGHT, OBSTACLE_1_POSX, OBSTACLE_1_POSY,OBSTACLE_1_IMAGE)
 
 
 # Obstacle Constants
@@ -50,27 +51,37 @@ OBSTACLE_2_WIDTH = 200
 OBSTACLE_2_HEIGHT = 280
 OBSTACLE_2_POSX = 615
 OBSTACLE_2_POSY = 140
-OBSTACLE_2 = Obstacle(OBSTACLE_2_WIDTH, OBSTACLE_2_HEIGHT, OBSTACLE_2_POSX, OBSTACLE_2_POSY)
 OBSTACLE_2_COLOR = (200,100,0,255)
 OBSTACLE_2_IMAGE = image.SolidColorImagePattern(OBSTACLE_2_COLOR).create_image(OBSTACLE_2_WIDTH, OBSTACLE_2_HEIGHT)
+OBSTACLE_2 = Obstacle(OBSTACLE_2_WIDTH, OBSTACLE_2_HEIGHT, OBSTACLE_2_POSX, OBSTACLE_2_POSY,OBSTACLE_2_IMAGE)
 
 
 # Obstacle Constants
 OBSTACLE_3_WIDTH = 200
 OBSTACLE_3_HEIGHT = 30
 OBSTACLE_3_POSX = 615
-OBSTACLE_3_POSY = 435
-OBSTACLE_3  = Obstacle(OBSTACLE_3_WIDTH, OBSTACLE_3_HEIGHT, OBSTACLE_3_POSX, OBSTACLE_3_POSY)
+OBSTACLE_3_POSY = 265
 OBSTACLE_3_COLOR = (200,0,100,255)
 OBSTACLE_3_IMAGE = image.SolidColorImagePattern(OBSTACLE_3_COLOR).create_image(OBSTACLE_3_WIDTH, OBSTACLE_3_HEIGHT)
+OBSTACLE_3  = Obstacle(OBSTACLE_3_WIDTH, OBSTACLE_3_HEIGHT, OBSTACLE_3_POSX, OBSTACLE_3_POSY,OBSTACLE_3_IMAGE)
 
-
-
+ACTIVE_OBSTACLES = [OBSTACLE_1, OBSTACLE_3]
 
 
 # Game State Constants
 POPULATION = 70
 GENE_LENGTH = 80
+
+
+# Rocket State Constants
+
+class State(Enum):
+
+    flying       = "Rocket is flying"
+    hit_target   = "Rocket has hit the target"
+    hit_obstacle = "Rocket has hit an obstacle"
+    hit_boundary = "Rocket has hit a boundary"
+    used_up_gene = "Rocket has used up all of its acceleration vectors in gene"
 
 
 # Init Pos Constants
@@ -90,8 +101,12 @@ ACC_LIMIT_X = 300
 ACC_LIMIT_Y = 300
 
 
-# default fps for game state
-DEFAULT_FPS = 60
+# default fps for game state/ events handling
+DEFAULT_FPS = 80
+
+# Unit Time is used for updating positions, it represents the smallest discrete time for the rocket world
+DEFAULT_UNIT_TIME = 1/60
+
 
 # Tick interval constant for activating the next Gene, used in Game State and Updater
 # This means that for every 10 ticks/ (times that update-all has been executed)
@@ -100,12 +115,13 @@ GENE_INTERVAL = 10
 
 
 # Fitness Constants
-TARGET_BONUS = 5
+HIT_TARGET_BONUS = 5
 HIT_BOUNDARY_PENALTY = 0.01
 HIT_OBSTALCE_PENALTY = 0.01
-PASS_OBSTACLE_BONUS = 200
+PASS_OBSTACLE_BONUS = 100
 FITNESS_FUNCTION_POWER = 5
 
 
 #Evolution Constants
 MUTATION_RATE = 0.07
+

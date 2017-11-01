@@ -25,28 +25,15 @@ class Renderer(window.Window):
 
     def prepare_obstacles_image(self):
 
-        self.obstacle1_image = settings.OBSTACLE_1_IMAGE
-        center(self.obstacle1_image)
-        self.obstacle2_image = settings.OBSTACLE_2_IMAGE
-        center(self.obstacle2_image)
-        self.obstacle3_image = settings.OBSTACLE_3_IMAGE
-        center(self.obstacle3_image)
-
+        lobs = self.game_state.lobs
         self.obstacle_batch = graphics.Batch()
 
-        self.obstacle1 = sprite.Sprite(self.obstacle1_image, batch = self.obstacle_batch)
-        self.obstacle1.set_position(settings.OBSTACLE_1_POSX, settings.OBSTACLE_1_POSY)
+        self.lobs_images = []
 
-        self.obstacle2 = sprite.Sprite(self.obstacle2_image, batch = self.obstacle_batch)
-        self.obstacle2.set_position(settings.OBSTACLE_2_POSX, settings.OBSTACLE_2_POSY)
+        for obs in lobs:
+            center(obs.image)
+            self.lobs_images.append(sprite.Sprite(obs.image, batch=self.obstacle_batch, x = obs.x, y = obs.y))
 
-        self.obstacle3 = sprite.Sprite(self.obstacle3_image, batch = self.obstacle_batch)
-        self.obstacle3.set_position(settings.OBSTACLE_3_POSX, settings.OBSTACLE_3_POSY)
-
-
-        self.obstacle_1_image = None
-        self.obstacle_2_image = None
-        self.obstacle_3_image = None
 
 
     def prepare_target_image(self):
@@ -76,7 +63,7 @@ class Renderer(window.Window):
 
     def initiate_rocket_sprites(self,batch):
 
-        for i in range(0, self.game_state.numOfRockets):
+        for i in range(0, len(self.game_state.get_lor())):
 
             self.rocket_sprites.append(sprite.Sprite(self.rocket_image, batch=batch))
             scale_to_width(self.rocket_sprites[i], 2 * settings.ROCKET_RADIUS)

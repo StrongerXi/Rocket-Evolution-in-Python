@@ -15,12 +15,16 @@ class GameState:
         self.game_over_flag = False
         self.fps = fps
         self.lor = lor
-        self.lob = [settings.OBSTACLE_1, settings.OBSTACLE_2, settings.OBSTACLE_3]
-        self.numOfRockets = len(self.lor)
+        self.lobs = settings.ACTIVE_OBSTACLES
 
     def get_rocket(self,index):
         return self.lor[index]
 
+    # Return the list of Rocket instance in current game state
+    def get_lor(self):
+        return self.lor
+
+    # return the list of genes of all rockets in the current game state
     def get_log(self):
         log = []
         for rocket in self.lor:
