@@ -9,7 +9,8 @@ class Checker():
     def __init__(self,game_state):
 
         self.gs = game_state
-        self.lor = game_state.lor
+        self.lor = game_state.lor.copy()
+
 
 
     def check_all(self,*args):
@@ -17,7 +18,7 @@ class Checker():
         check_boundary_lor(self.lor) # Stop out of bound rockets
         check_target_lor(self.lor)  # Stop rockets that hit target
         check_obstacles_lor(self.lor, self.gs.lobs) # Stop rockets that hit any obstacle
-        check_gameover(self.gs) # check if all rockets have stopped
+        check_gameover(self.gs,self.lor) # check if all rockets have stopped
 
 
 # [List-of Rocket], [Rocket -> Rocket] -> Void
@@ -32,7 +33,10 @@ def check_for_flying_lor(lor, check_function):
                 if rocket.is_flying()
                 else rocket,
             lor))
-    return lor
+
+    list_of_still_flying_rocket = list(filter(lambda rocket: rocket is not None, lor))
+
+    return list_of_still_flying_rocket
 
 
 
@@ -61,9 +65,8 @@ def check_boundary_rocket(rocket):
         posx > settings.BACKG_WIDTH - settings.ROCKET_RADIUS or
         posy < 0 + settings.ROCKET_RADIUS or
         posy > settings.BACKG_HEIGHT - settings.ROCKET_RADIUS):
-
-
         rocket.set_state(settings.State.hit_boundary)
+        return None
 
     return rocket
 
@@ -84,6 +87,7 @@ def check_target_rocket(rocket):
 
     if distance < critical_distance:
         rocket.set_state(settings.State.hit_target)
+        return None
 
     return rocket
 
@@ -107,38 +111,47 @@ def check_obstacle_rocket(rocket,obs):
 
     if rocket_relative_loc == "inside":
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "right" and (rx < obs.right + rad):
+    elif rocket_relative_loc == "right" and (rx < obs.right + rad):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "left" and (rx > obs.left - rad):
+    elif rocket_relative_loc == "left" and (rx > obs.left - rad):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "top" and (ry < obs.top + rad):
+    elif rocket_relative_loc == "top" and (ry < obs.top + rad):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "bottom" and (ry > obs.bottom - rad):
+    elif rocket_relative_loc == "bottom" and (ry > obs.bottom - rad):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "top-right" and (rad > rocket.pos.distance(obs.topright)):
+    elif rocket_relative_loc == "top-right" and (rad > rocket.pos.distance(obs.topright)):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "top-left" and (rad > rocket.pos.distance(obs.topleft)):
+    elif rocket_relative_loc == "top-left" and (rad > rocket.pos.distance(obs.topleft)):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "bottom-right" and (rad > rocket.pos.distance(obs.bottomright)):
+    elif rocket_relative_loc == "bottom-right" and (rad > rocket.pos.distance(obs.bottomright)):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
-    if rocket_relative_loc == "bottom-left" and (rad > rocket.pos.distance(obs.bottomleft)):
+    elif rocket_relative_loc == "bottom-left" and (rad > rocket.pos.distance(obs.bottomleft)):
         rocket.set_state(settings.State.hit_obstacle)
+        return None
 
     return rocket
 
 
 # if all rockets have stopped, turn the gameover flag in Game State to True
-def check_gameover(gs):
+def check_gameover(gs,lor):
 
-    for rocket in gs.lor:
+    for rocket in lor:
         if rocket.is_flying():
             return False
     gs.game_over_flag = True
